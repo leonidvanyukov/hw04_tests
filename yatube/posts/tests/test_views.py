@@ -36,7 +36,10 @@ class PostViewTest(TestCase):
         templates_page_names = {
             'posts/index.html': reverse('posts:index'),
             'posts/new_post.html': reverse('posts:post_create'),
-            'posts/group_list.html': (reverse('posts:group', kwargs={'slug': 'test-slug'})),
+            'posts/group_list.html': (reverse(
+                'posts:group',
+                kwargs={'slug': 'test-slug'}
+            )),
         }
 
         for template, reverse_name in templates_page_names.items():

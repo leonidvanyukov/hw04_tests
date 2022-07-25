@@ -42,7 +42,11 @@ class PostUrlTest(TestCase):
         for template, address in templates_url_names.items():
             with self.subTest(address=address):
                 response = self.guest_client.get(address)
-                self.assertTemplateUsed(response, template, f'response = {response}, template = {template}')
+                self.assertTemplateUsed(
+                    response,
+                    template,
+                    f'response = {response}, template = {template}'
+                )
 
     def test_404_status_code(self):
         """Несуществующий URL-адрес выдает 404"""
@@ -59,7 +63,9 @@ class PostUrlTest(TestCase):
         )
 
     def test_posts_edit_url_uses_correct_template(self):
-        """Страница /posts/<post_id>/edit/ использует шаблон posts/new_post.html"""
+        """
+        Страница /posts/<post_id>/edit/ использует шаблон posts/new_post.html
+        """
         response = self.authorized_client.get('/create/')
         self.assertTemplateUsed(response, 'posts/new_post.html')
         response = self.guest_client.get('/posts/1/edit/')
