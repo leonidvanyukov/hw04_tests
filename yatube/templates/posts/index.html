@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Социальная сеть YaTube
+{% endblock title %}
+
+{% block content %}
+    <h1>Социальная сеть YaTube</h1>
+
+    {% for post in page_obj %}
+        <article>
+            <ul>
+                <li>
+                  Автор: <a href="{% url 'posts:profile' post.author %}">{{ post.author.get_full_name }}</a>
+                </li>
+                <li>
+                  дата публикации: {{ дата_публикации|date:"d E Y" }}
+                </li>
+            </ul>      
+            <p>
+                {{ post.text }}
+            </p>
+            {% if post.group %}
+                <a href="{% url 'posts:group' post.group.slug %}">все записи группы</a>
+            {% endif %}
+        </article>
+        {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+
+    {% include 'posts/includes/paginator.html' %}
+
+{% endblock content %}
