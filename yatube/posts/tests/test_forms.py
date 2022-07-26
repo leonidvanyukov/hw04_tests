@@ -11,7 +11,6 @@ class PostFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.guest_client = Client()
         cls.user = User.objects.create_user(username='test-user')
         cls.authorized_client = Client()
         cls.authorized_client.force_login(cls.user)
@@ -20,46 +19,51 @@ class PostFormTests(TestCase):
             slug='test-slug',
             description='test-description'
         )
+        cls.form_data = {
+            'text': 'test-post',
+            'group': cls.group.id,
+        }
+        cls.post = Post.objects.create(
+            text=PostFormTests.form_data['text'],
+            author=PostFormTests.user,
+            group=PostFormTests.group,
+        )
 
     def test_create_post(self):
         posts_count = Post.objects.count()
-        group_field = PostFormTests.group.id
-        form_data = {
-            'text': 'test-post',
-            'group': group_field,
-        }
         response = self.authorized_client.post(
             reverse('posts:post_create'),
-            data=form_data,
+            data=PostFormTests.form_data,
             follow=True
         )
-        self.assertRedirects(response, reverse(
-            'posts:profile',
-            args={PostFormTests.user}
-        ))
+        self.assertRedirects(
+            response,
+            reverse('posts:profile', args={PostFormTests.user}),
+        )
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertTrue(
             Post.objects.filter(
                 group=PostFormTests.group.id,
-                text='test-post'
+                text=PostFormTests.form_data['text'],
+                id=PostFormTests.post.id+1,
             ).exists()
         )
-        form_data = {
-            'text': 'test-post1',
-            'group': group_field,
-        }
+
+    def test_edit_post(self):
+        PostFormTests.form_data['text'] = 'test-post1'
         response = self.authorized_client.post(
-            reverse('posts:post_edit', args={1}),
-            data=form_data,
+            reverse('posts:post_edit', args={PostFormTests.post.id}),
+            data=PostFormTests.form_data,
             follow=True
         )
-        self.assertRedirects(response, reverse(
-            'posts:post_detail',
-            args={'1'}
-        ))
+        self.assertRedirects(
+            response,
+            reverse('posts:post_detail', args={PostFormTests.post.id}),
+        )
         self.assertTrue(
             Post.objects.filter(
                 group=PostFormTests.group.id,
-                text='test-post1'
-            ).exists()
+                text=PostFormTests.form_data['text'],
+                id=PostFormTests.post.id,
+            ).exists(),
         )

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
+from http import HTTPStatus
 
 from ..models import Group, Post
 
@@ -22,7 +23,6 @@ class PostUrlTest(TestCase):
         )
 
     def setUp(self):
-        self.guest_client = Client()
         self.user = PostUrlTest.user
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
@@ -35,13 +35,13 @@ class PostUrlTest(TestCase):
         # Шаблоны по адресам
         templates_url_names = {
             'posts/index.html': '/',
-            'posts/group_list.html': '/group/test-slug/',
-            'posts/profile.html': '/profile/test-user/',
-            'posts/post_detail.html': '/posts/1/',
+            'posts/group_list.html': f'/group/{self.group.slug}/',
+            'posts/profile.html': f'/profile/{self.user}/',
+            'posts/post_detail.html': f'/posts/{self.post.id}/',
         }
         for template, address in templates_url_names.items():
             with self.subTest(address=address):
-                response = self.guest_client.get(address)
+                response = self.client.get(address)
                 self.assertTemplateUsed(
                     response,
                     template,
@@ -50,14 +50,14 @@ class PostUrlTest(TestCase):
 
     def test_404_status_code(self):
         """Несуществующий URL-адрес выдает 404"""
-        response = self.guest_client.get('/404/')
-        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/404/')
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_posts_create_url_uses_correct_template(self):
         """Страница /create/ использует шаблон posts/new_post.html"""
         response = self.authorized_client.get('/create/')
         self.assertTemplateUsed(response, 'posts/new_post.html')
-        response = self.guest_client.get('/create/')
+        response = self.client.get('/create/')
         self.assertRedirects(
             response, '/auth/login/?next=/create/'
         )
@@ -68,11 +68,25 @@ class PostUrlTest(TestCase):
         """
         response = self.authorized_client.get('/create/')
         self.assertTemplateUsed(response, 'posts/new_post.html')
-        response = self.guest_client.get('/posts/1/edit/')
+        response = self.client.get(f'/posts/{self.post.id}/edit/')
         self.assertRedirects(
-            response, '/auth/login/?next=/posts/1/edit/'
+            response, f'/auth/login/?next=/posts/{self.post.id}/edit/'
         )
-        response = self.not_author_client.get('/posts/1/edit/')
+        response = self.not_author_client.get(f'/posts/{self.post.id}/edit/')
         self.assertRedirects(
             response, '/profile/NotAuthor/'
         )
+
+    def test_pages_available(self):
+        """Все страницы доступны"""
+        url_names = [
+            '/',
+            f'/group/{self.group.slug}/',
+            f'/profile/{self.user}/',
+            f'/posts/{self.post.id}/',
+        ]
+        for address in url_names:
+            with self.subTest(address=address):
+                response = self.client.get(address)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
+
