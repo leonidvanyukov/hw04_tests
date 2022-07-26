@@ -45,7 +45,7 @@ class PostFormTests(TestCase):
             Post.objects.filter(
                 group=PostFormTests.group.id,
                 text=PostFormTests.form_data['text'],
-                id=PostFormTests.post.id+1,
+                id=PostFormTests.post.id + 1,
             ).exists()
         )
 

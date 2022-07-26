@@ -89,4 +89,3 @@ class PostUrlTest(TestCase):
             with self.subTest(address=address):
                 response = self.client.get(address)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
-

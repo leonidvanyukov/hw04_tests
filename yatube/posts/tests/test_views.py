@@ -113,7 +113,10 @@ class PostViewTest(TestCase):
         """Количество постов на первой странице равно 10"""
 
         response = self.client.get(reverse('posts:index'))
-        self.assertEqual(len(response.context.get('page_obj').object_list), settings.AMOUNT)
+        self.assertEqual(
+            len(response.context.get('page_obj').object_list),
+            settings.AMOUNT
+        )
 
     def test_second_page_contains_three_records(self):
         """Количество постов на второй странице равно 3"""
@@ -122,4 +125,7 @@ class PostViewTest(TestCase):
         author_posts = author.posts.all()
         posts_count_left = count_elements(author_posts) - settings.AMOUNT
         response = self.client.get(reverse('posts:index') + '?page=2')
-        self.assertEqual(len(response.context.get('page_obj').object_list), posts_count_left)
+        self.assertEqual(
+            len(response.context.get('page_obj').object_list),
+            posts_count_left
+        )
