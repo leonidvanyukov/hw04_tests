@@ -1,6 +1,7 @@
+from http import HTTPStatus
+
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
-from http import HTTPStatus
 
 from ..models import Group, Post
 
@@ -26,9 +27,9 @@ class PostUrlTest(TestCase):
         self.user = PostUrlTest.user
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
-        self.user = User.objects.create_user(username='NotAuthor')
+        self.not_author_user = User.objects.create_user(username='NotAuthor')
         self.not_author_client = Client()
-        self.not_author_client.force_login(self.user)
+        self.not_author_client.force_login(self.not_author_user)
 
     def test_urls_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
@@ -74,7 +75,7 @@ class PostUrlTest(TestCase):
         )
         response = self.not_author_client.get(f'/posts/{self.post.id}/edit/')
         self.assertRedirects(
-            response, '/profile/NotAuthor/'
+            response, f'/profile/{self.not_author_user.username}/'
         )
 
     def test_pages_available(self):

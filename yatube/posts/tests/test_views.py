@@ -1,12 +1,12 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django.test import Client, TestCase
 from django.urls import reverse
-from django.conf import settings
-from django.shortcuts import get_object_or_404
 
-from ..utils import count_elements
 from ..models import Group, Post
+from ..utils import count_elements
 
 User = get_user_model()
 
