@@ -8,23 +8,23 @@
       <ul class="nav nav-pills">
       {% with request.resolver_match.view_name as view_name %}
         <li class="nav-item">
-          <a class="nav-link {% if view_name  == 'about:author' %}active{% endif %}" href="{% url 'about:author' %}">
+          <a class="nav-link {% if view_name == 'about:author' %}active{% endif %}" href="{% url 'about:author' %}">
               Об авторе
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if view_name  == 'about:tech' %}active{% endif %}" href="{% url 'about:tech' %}">
+          <a class="nav-link {% if view_name == 'about:tech' %}active{% endif %}" href="{% url 'about:tech' %}">
           Технологии
           </a>
         </li>
         {% if user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link {% if view_name  == 'posts:post_create' %}active{% endif %}" href="{% url 'posts:post_create' %}">
+          <a class="nav-link {% if view_name == 'posts:post_create' %}active{% endif %}" href="{% url 'posts:post_create' %}">
           Новая запись
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if view_name  == 'users:password_reset_form' %}active{% endif %}" href="{% url 'users:password_reset_form' %}">
+          <a class="nav-link {% if view_name == 'users:password_reset_form' %}active{% endif %}" href="{% url 'users:password_reset_form' %}">
           Изменить пароль
           </a>
         </li>
@@ -36,12 +36,12 @@
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link {% if view_name  == 'users:login' %}active{% endif %}" href="{% url 'users:login' %}">
+          <a class="nav-link {% if view_name == 'users:login' %}active{% endif %}" href="{% url 'users:login' %}">
           Войти
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if view_name  == 'users:signup' %}active{% endif %}" href="{% url 'users:signup' %}">
+          <a class="nav-link {% if view_name == 'users:signup' %}active{% endif %}" href="{% url 'users:signup' %}">
           Регистрация
           </a>
         </li>

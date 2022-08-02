@@ -33,7 +33,6 @@ class PostUrlTest(TestCase):
 
     def test_urls_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
-        # Шаблоны по адресам
         templates_url_names = {
             'posts/index.html': '/',
             'posts/group_list.html': f'/group/{self.group.slug}/',
@@ -42,7 +41,7 @@ class PostUrlTest(TestCase):
         }
         for template, address in templates_url_names.items():
             with self.subTest(address=address):
-                response = self.client.get(address)
+                response = self.authorized_client.get(address)
                 self.assertTemplateUsed(
                     response,
                     template,
@@ -88,5 +87,5 @@ class PostUrlTest(TestCase):
         ]
         for address in url_names:
             with self.subTest(address=address):
-                response = self.client.get(address)
+                response = self.authorized_client.get(address)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
